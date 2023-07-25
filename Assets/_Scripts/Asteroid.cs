@@ -34,7 +34,7 @@ public class Asteroid : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out Junk junk))
         {
-            Destroy(junk.gameObject);
+            JunkManager.Instance.DestroyJunk(junk);
         }
     }
 }

@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out Junk junk))
         {
-            Destroy(junk.gameObject);
+            JunkManager.Instance.DestroyJunk(junk);
             OnJunkCollided?.Invoke(this, EventArgs.Empty);
         }
         else if (collision.gameObject.TryGetComponent(out Asteroid asteroid))

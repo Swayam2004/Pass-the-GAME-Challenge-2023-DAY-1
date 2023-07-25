@@ -1,12 +1,48 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class JunkManager : MonoBehaviour
 {
+    public static JunkManager Instance { get; private set; }
+
     [SerializeField] private GameObject _junkPrefab;
     [SerializeField] private int _numberOfJunkToSpawn = 10;
     [SerializeField] private float _spawnRadius = 5f;
 
     private Transform _playerTransform;
+    private ObjectPool<Junk> _junkPool;
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There are more than one PlayerController");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+        _junkPool = new ObjectPool<Junk>(() =>
+        {
+            Vector2 randomOffset = Random.insideUnitCircle * _spawnRadius;
+            Vector3 spawnPosition = _playerTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+            return Instantiate(_junkPrefab, spawnPosition, Quaternion.identity).GetComponent<Junk>();
+        }, junk =>
+        {
+            Vector2 randomOffset = Random.insideUnitCircle * _spawnRadius;
+            Vector3 spawnPosition = _playerTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+            junk.gameObject.SetActive(true);
+            junk.transform.position = spawnPosition;
+        }, junk =>
+        {
+            junk.gameObject.SetActive(false);
+        }, junk =>
+        {
+            Destroy(junk.gameObject);
+        }, false, 60, 100);
+    }
 
     private void Start()
     {
@@ -27,10 +63,7 @@ public class JunkManager : MonoBehaviour
 
     private void SpawnJunkAroundPlayer()
     {
-        Vector2 randomOffset = Random.insideUnitCircle * _spawnRadius;
-        Vector3 spawnPosition = _playerTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
-
-        Instantiate(_junkPrefab, spawnPosition, Quaternion.identity);
+        Junk junk = _junkPool.Get();
     }
 
     private void DestroyJunkOutsideRadius()
@@ -43,7 +76,7 @@ public class JunkManager : MonoBehaviour
 
             if (distanceToPlayer > _spawnRadius)
             {
-                Destroy(junk.gameObject);
+                _junkPool.Release(junk);
             }
         }
 
@@ -51,5 +84,10 @@ public class JunkManager : MonoBehaviour
         {
             SpawnJunkAroundPlayer();
         }
+    }
+
+    public void DestroyJunk(Junk junk)
+    {
+        _junkPool.Release(junk);
     }
 }
