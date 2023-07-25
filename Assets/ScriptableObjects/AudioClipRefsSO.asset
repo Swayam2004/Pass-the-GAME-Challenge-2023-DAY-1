@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec6f8c43c0b03643993a5c7f099ed99, type: 3}
+  m_Name: AudioClipRefsSO
+  m_EditorClassIdentifier: 
+  PickUp:
+  - {fileID: 8300000, guid: d2904332ced095445b63bdfdf7b9fb1f, type: 3}
+  - {fileID: 8300000, guid: 63531b1a3622fce47a73d59c1557f0a1, type: 3}
+  - {fileID: 8300000, guid: 7f48694c1b189574ca8ba3a9430a6dbc, type: 3}
+  Hit:
+  - {fileID: 8300000, guid: f303f785fa873c24c8a71ceef8c725d7, type: 3}
+  - {fileID: 8300000, guid: ba265ab6a7c596f429fb1d45cc06e590, type: 3}
+  - {fileID: 8300000, guid: 4aaf62b8f009e864ba353a49c72e7911, type: 3}
+  MoveFire: {fileID: 8300000, guid: 98f181d4338199c44bb54dba21871ff4, type: 3}

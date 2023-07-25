@@ -1,8 +1,13 @@
+using System;
+using System.ComponentModel;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public event EventHandler OnGamePaused;
+    public event EventHandler OnGameUnpaused;
 
     private enum State
     {
@@ -80,11 +85,13 @@ public class GameManager : MonoBehaviour
         if (_isPaused)
         {
             _gamePauseUI.SetActive(true);
+            OnGamePaused?.Invoke(this, EventArgs.Empty);
             Time.timeScale = 0;
         }
         else
         {
             _gamePauseUI.SetActive(false);
+            OnGameUnpaused?.Invoke(this, EventArgs.Empty);
             Time.timeScale = 1;
         }
     }

@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -19,24 +16,24 @@ public class PlayerController : MonoBehaviour
     public float _rotationSpeed = 180f;
 
     private Rigidbody2D _rb;
+    private AudioSource _playerAudioSource;
     private int _health;
+    private bool _isMoving;
 
     private void Awake()
     {
         if (Instance != null)
         {
-            Debug.LogError("There are more than one PlayerController"); 
+            Debug.LogError("There are more than one PlayerController");
             Destroy(gameObject);
             return;
         }
         Instance = this;
 
-        _health = 6;
-    }
-
-    private void Start()
-    {
+        _playerAudioSource = GetComponent<AudioSource>();
         _rb = GetComponent<Rigidbody2D>();
+
+        _health = 6;
     }
 
     private void Update()
@@ -49,6 +46,8 @@ public class PlayerController : MonoBehaviour
 
         float rotationAmount = rotationInput * _rotationSpeed * Time.deltaTime;
         _rb.rotation -= rotationAmount;
+
+        _isMoving = !(movement == Vector2.zero && rotationAmount == 0f);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -57,10 +56,14 @@ public class PlayerController : MonoBehaviour
         {
             JunkManager.Instance.DestroyJunk(junk);
             OnJunkCollided?.Invoke(this, EventArgs.Empty);
+
+            SoundManager.Instance.PlayPickupSound(junk);
         }
         else if (collision.gameObject.TryGetComponent(out Asteroid asteroid))
         {
             Damage(1);
+
+            SoundManager.Instance.PlayHitSound(asteroid);
         }
     }
 
@@ -77,5 +80,15 @@ public class PlayerController : MonoBehaviour
         {
             Health = _health
         });
+    }
+
+    public bool IsMoving()
+    {
+        return _isMoving;
+    }
+
+    public AudioSource GetPlayerAudioSource()
+    {
+        return _playerAudioSource;
     }
 }
