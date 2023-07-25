@@ -11,9 +11,11 @@ public class GameManager : MonoBehaviour
     }
 
     [SerializeField] private GameObject _gameOverUI;
+    [SerializeField] private GameObject _gamePauseUI;
 
     private int _score;
     private State _state;
+    private bool _isPaused = false;
 
     private void Awake()
     {
@@ -32,6 +34,12 @@ public class GameManager : MonoBehaviour
     {
         PlayerController.Instance.OnJunkCollided += PlayerController_OnJunkCollided;
         PlayerController.Instance.OnHealthChanged += PlayerController_OnHealthChanged;
+        GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+    }
+
+    private void GameInput_OnPauseAction(object sender, System.EventArgs e)
+    {
+        ToggleGamePause();
     }
 
     private void PlayerController_OnHealthChanged(object sender, PlayerController.OnHealthChangedEventArgs e)
@@ -63,5 +71,21 @@ public class GameManager : MonoBehaviour
     public bool IsGamePlaying()
     {
         return _state == State.GamePlaying;
+    }
+
+    public void ToggleGamePause()
+    {
+        _isPaused = !_isPaused;
+
+        if (_isPaused)
+        {
+            _gamePauseUI.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            _gamePauseUI.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
 }
