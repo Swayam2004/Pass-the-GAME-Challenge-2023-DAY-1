@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class JunkManager : MonoBehaviour
 {
-    [SerializeField] private GameObject junkPrefab;
-    [SerializeField] private int numberOfJunkToSpawn = 10;
-    [SerializeField] private float spawnRadius = 5f;
+    [SerializeField] private GameObject _junkPrefab;
+    [SerializeField] private int _numberOfJunkToSpawn = 10;
+    [SerializeField] private float _spawnRadius = 5f;
 
-    private Transform playerTransform;
+    private Transform _playerTransform;
 
     private void Start()
     {
-        playerTransform = PlayerController.Instance.transform;
+        _playerTransform = PlayerController.Instance.transform;
 
         // Spawn junk objects around the player
-        for (int i = 0; i < numberOfJunkToSpawn; i++)
+        for (int i = 0; i < _numberOfJunkToSpawn; i++)
         {
             SpawnJunkAroundPlayer();
         }
@@ -27,10 +27,10 @@ public class JunkManager : MonoBehaviour
 
     private void SpawnJunkAroundPlayer()
     {
-        Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
-        Vector3 spawnPosition = playerTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+        Vector2 randomOffset = Random.insideUnitCircle * _spawnRadius;
+        Vector3 spawnPosition = _playerTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
 
-        Instantiate(junkPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(_junkPrefab, spawnPosition, Quaternion.identity);
     }
 
     private void DestroyJunkOutsideRadius()
@@ -39,15 +39,15 @@ public class JunkManager : MonoBehaviour
 
         foreach (Junk junk in junkObjects)
         {
-            float distanceToPlayer = Vector3.Distance(junk.transform.position, playerTransform.position);
+            float distanceToPlayer = Vector3.Distance(junk.transform.position, _playerTransform.position);
 
-            if (distanceToPlayer > spawnRadius)
+            if (distanceToPlayer > _spawnRadius)
             {
                 Destroy(junk.gameObject);
             }
         }
 
-        if (junkObjects.Length < numberOfJunkToSpawn / 2)
+        if (junkObjects.Length < _numberOfJunkToSpawn / 2)
         {
             SpawnJunkAroundPlayer();
         }

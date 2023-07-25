@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogError("There are more than one PlayerController");
+            Debug.LogError("There are more than one PlayerController"); 
             Destroy(gameObject);
             return;
         }
