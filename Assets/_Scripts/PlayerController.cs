@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +7,12 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
 
-    public float movementSpeed = 5f;
-    public float rotationSpeed = 180f;
+    public event EventHandler OnJunkCollided;
 
-    private Rigidbody2D rb;
+    public float _movementSpeed = 15f;
+    public float _rotationSpeed = 180f;
+
+    private Rigidbody2D _rb;
 
     private void Awake()
     {
@@ -24,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -32,10 +35,19 @@ public class PlayerController : MonoBehaviour
         float moveInput = GameInput.Instance.GetMovementNormalised().y;
         float rotationInput = GameInput.Instance.GetMovementNormalised().x;
 
-        Vector2 movement = transform.up * moveInput * movementSpeed;
-        rb.velocity = movement;
+        Vector2 movement = transform.up * moveInput * _movementSpeed;
+        _rb.velocity = movement;
 
-        float rotationAmount = rotationInput * rotationSpeed * Time.deltaTime;
-        rb.rotation -= rotationAmount;
+        float rotationAmount = rotationInput * _rotationSpeed * Time.deltaTime;
+        _rb.rotation -= rotationAmount;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(out Junk junk))
+        {
+            Destroy(junk.gameObject);
+            OnJunkCollided?.Invoke(this, EventArgs.Empty);
+        }
     }
 }
